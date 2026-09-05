@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { computed, ref, onMounted, nextTick } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { blockVariant, cx } from '../styling/classes';
     import { textStyles } from '../styling/text';
 
@@ -68,6 +68,11 @@
     }));
 
     const textareaRef = ref<HTMLTextAreaElement | null>(null);
+    const draftValue = ref(props.value);
+
+    watch(() => props.value, (value) => {
+        draftValue.value = value;
+    });
 
     function autoGrow() {
         const el = textareaRef.value;
@@ -76,17 +81,14 @@
         el.style.height = `${el.scrollHeight}px`;
     }
 
-    onMounted(() => {
-        if (props.editable) {
-            nextTick(autoGrow);
-        }
-    });
+    watch([textareaRef, draftValue, styles, () => props.size, () => props.minLines], autoGrow, { flush: 'post' });
 </script>
 
 <template>
     <textarea
         v-if="editable"
         ref="textareaRef"
+        v-model="draftValue"
         class="genui-text--editable"
         :class="classes"
         :style="styles"
@@ -94,11 +96,10 @@
         :required="editable.required"
         :placeholder="editable.placeholder"
         :rows="minLines || 1"
-        @input="autoGrow"
-    >{{ value }}</textarea>
+    />
     <component
-        v-else
         :is="as"
+        v-else
         :class="classes"
         :style="styles"
     >

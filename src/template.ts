@@ -1,5 +1,6 @@
 import nunjucks from 'nunjucks/browser/nunjucks.js';
 import type { TemplateContext, WidgetTemplate, WidgetTemplateSource } from './types/widget';
+import { validateWidgetTemplate } from './validation';
 
 const templateEnvironment = new nunjucks.Environment(undefined, {
   autoescape: false,
@@ -113,15 +114,20 @@ function normalizeJinjaCompatibility(template: string): string {
 export function resolveTemplate(
   template: WidgetTemplateSource,
   context: TemplateContext = {},
+  allowJinjaTemplates = false,
 ): WidgetTemplate {
   if (typeof template !== 'string') {
-    return template;
+    return validateWidgetTemplate(template);
   }
 
-  const rendered = templateEnvironment.renderString(normalizeJinjaCompatibility(template), context);
+  // Nunjucks is not a sandbox. Only application-authored, trusted template sources may
+  // enter this branch; data from users or models stays JSON unless the caller opts in.
+  const rendered = allowJinjaTemplates
+    ? templateEnvironment.renderString(normalizeJinjaCompatibility(template), context)
+    : template;
 
   try {
-    return assertWidgetTemplate(JSON.parse(rendered));
+    return validateWidgetTemplate(assertWidgetTemplate(JSON.parse(rendered)));
   } catch (error) {
     const preview = summarizeOutput(rendered);
     const suffix = preview ? ` Rendered output: ${preview}` : '';

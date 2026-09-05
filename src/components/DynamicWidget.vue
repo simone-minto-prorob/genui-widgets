@@ -8,9 +8,11 @@ const props = withDefaults(
   defineProps<{
     template: WidgetTemplateSource;
     templateContext?: TemplateContext;
+    allowJinjaTemplates?: boolean;
   }>(),
   {
     templateContext: () => ({}),
+    allowJinjaTemplates: false,
   },
 );
 
@@ -52,7 +54,7 @@ const resolvedTemplate = computed<WidgetTemplate>(() => {
   }
 
   trackReactiveValue(props.templateContext);
-  return resolveTemplate(props.template, props.templateContext);
+  return resolveTemplate(props.template, props.templateContext, props.allowJinjaTemplates);
 });
 
 const componentToRender = computed(() => widgets[resolvedTemplate.value.type]);

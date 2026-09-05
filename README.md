@@ -61,13 +61,22 @@ container.addEventListener('genui-action', (e) => {
 
 ## Jinja templates
 
-Templates can be Jinja strings that resolve to widget JSON at render time:
+The Quindi-patched build accepts JSON by default. Application-authored, trusted Jinja
+templates require an explicit opt-in; Nunjucks does not sandbox template execution. Never
+enable this for template sources provided by a user or an LLM. Pass external values in the
+context and use `tojson`:
 
 ```ts
 render(container, `{"type":"Card","children":[{"type":"Title","value":{{ title | tojson }}}]}`, {
+  allowJinjaTemplates: true,
   templateContext: { title: 'Hello' },
 });
 ```
+
+For `DynamicWidget`, set `:allow-jinja-templates="true"` only for trusted template sources.
+For `resolveTemplate`, pass `true` as the third argument. Both default to JSON without
+executing Jinja. All resolved widget trees are validated before rendering; arbitrary DOM
+properties, unsupported component properties and unsafe `as` tags are rejected.
 
 ## `.widget` files
 

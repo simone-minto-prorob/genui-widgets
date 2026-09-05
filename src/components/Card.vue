@@ -69,6 +69,7 @@
 
 .genui-card-wrapper {
     display: flex;
+    min-width: 0;
     flex-direction: column;
     gap: apprem.rem(1);
     align-items: flex-start;
@@ -76,6 +77,7 @@
 
 .genui-card {
     width: 100%;
+    max-width: 100%;
     box-shadow: 0 apprem.rem(.25) apprem.rem(.5) 0 #0000001A;
     overflow: hidden;
 }

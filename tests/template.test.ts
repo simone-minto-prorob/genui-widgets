@@ -11,7 +11,7 @@ describe('resolveTemplate', () => {
       tech: ['Vue 3', 'Jinja'],
       title: 'GenUI Widgets',
       url: 'https://example.com/case-study',
-    });
+    }, true);
 
     expect(resolved).toEqual({
       type: 'Card',

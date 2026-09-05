@@ -91,6 +91,7 @@ describe('render', () => {
     const template = `{"type":"Card","children":[{"type":"Title","value":{{ title | tojson }}},{"type":"Row","gap":1,"children":[{%- set _items -%}{%- for techItem in tech -%}{%- set itemIndex = loop.index0 -%},{"type":"Badge","key":{{ itemIndex | tojson }},"label":{{ techItem | tojson }}}{%- endfor -%}{%- endset -%}{{- (_items[1:] if _items and _items[0] == ',' else _items) -}}]}]}`;
 
     const widget = render(container, template, {
+      allowJinjaTemplates: true,
       templateContext: {
         tech: ['Vue', 'Jinja'],
         title: 'Launch ready',

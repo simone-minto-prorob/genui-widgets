@@ -11,11 +11,11 @@ export function render(
   template: WidgetTemplateSource,
   options: RenderOptions = {},
 ): WidgetInstance {
-  const { theme = {}, format = 'native', templateContext: initialTemplateContext = {} } = options;
+  const { theme = {}, format = 'native', templateContext: initialTemplateContext = {}, allowJinjaTemplates = false } = options;
   let templateContext: TemplateContext = initialTemplateContext;
 
   const normalize = (value: WidgetTemplateSource, context: TemplateContext) => {
-    const resolvedTemplate = resolveTemplate(value, context);
+    const resolvedTemplate = resolveTemplate(value, context, allowJinjaTemplates);
 
     return format === 'chatkit' ? fromChatKit(resolvedTemplate) : resolvedTemplate;
   };
@@ -32,8 +32,9 @@ export function render(
 
   return {
     update(nextTemplate: WidgetTemplateSource, nextTemplateContext = templateContext) {
+      const next = normalize(nextTemplate, nextTemplateContext);
       templateContext = nextTemplateContext;
-      templateRef.value = normalize(nextTemplate, templateContext);
+      templateRef.value = next;
     },
     setTheme(nextTheme) {
       applyTheme(container, createTheme(defaultTheme, nextTheme));

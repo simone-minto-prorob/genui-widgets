@@ -11,4 +11,6 @@ export interface RenderOptions {
   theme?: ThemeConfig;
   format?: 'native' | 'chatkit';
   templateContext?: TemplateContext;
+  /** Opt in only for application-authored templates. Nunjucks does not sandbox execution. */
+  allowJinjaTemplates?: boolean;
 }

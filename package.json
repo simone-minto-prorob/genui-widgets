@@ -1,6 +1,6 @@
 {
   "name": "@swis/genui-widgets",
-  "version": "1.2.0",
+  "version": "1.2.1-quindi.1",
   "description": "Standalone Vue 3 widget renderer compatible with OpenAI ChatKit widget JSON.",
   "repository": {
     "type": "git",
@@ -13,7 +13,7 @@
   "module": "./dist/genui-widgets.esm.js",
   "types": "./dist/index.d.ts",
   "engines": {
-    "node": ">=20"
+    "node": "^20.19.0 || ^22.13.0 || >=24.0.0"
   },
   "exports": {
     ".": {
@@ -47,6 +47,7 @@
     "eslint-plugin-vue": "^10.5.1",
     "globals": "^16.4.0",
     "happy-dom": "^20.8",
+    "jsdom": "^29.1.1",
     "playwright": "^1.58.2",
     "sass": "^1.98",
     "typescript": "^5.9",

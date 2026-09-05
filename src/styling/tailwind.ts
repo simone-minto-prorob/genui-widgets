@@ -27,8 +27,7 @@ export function resolveTailwindToken(token: string): string | undefined {
   const colorKey = color as TailwindColor;
 
   const colorPalette = TAILWIND_COLORS[colorKey];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (colorPalette as any)[step];
+  return colorPalette[Number(step) as keyof typeof colorPalette];
 }
 
 /**

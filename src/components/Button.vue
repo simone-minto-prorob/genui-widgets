@@ -3,6 +3,7 @@
     import BaseLoader from './BaseLoader.vue';
     import Icon from './Icon.vue';
     import { useActionDispatcher } from '../composables/useActionDispatcher';
+    import { useFormSubmission } from '../composables/useFormSubmission';
     import { blockModifier, blockVariant, cx } from '../styling/classes';
     import { isTailwindToken, resolveTailwindToken, adjustAlpha } from '../styling/tailwind';
     import type { WidgetAction } from '../types/widget';
@@ -72,7 +73,13 @@
     });
 
     const buttonRef = ref<HTMLButtonElement | null>(null);
-    const isLoading = ref(false);
+    const isHandlingClick = ref(false);
+    const formSubmission = useFormSubmission();
+    const isSubmittingForm = computed(() => props.submit && Boolean(formSubmission?.isSubmitting.value));
+    const isLoading = computed(() => isHandlingClick.value || (
+        isSubmittingForm.value && formSubmission?.submitter.value === buttonRef.value
+    ));
+    const isDisabled = computed(() => props.disabled || isLoading.value || isSubmittingForm.value);
     const fixedWidth = ref<string | null>(null);
     const { dispatchAction } = useActionDispatcher();
 
@@ -137,26 +144,27 @@
         }
     });
 
-    const handleClick = async () => {
-        if (props.disabled || isLoading.value) return;
+    const handleClick = async (event: MouseEvent) => {
+        if (isDisabled.value) {
+            event.preventDefault();
+            return;
+        }
+
+        if (!props.onClickAction) return;
 
         if (buttonRef.value) {
             const { width } = buttonRef.value.getBoundingClientRect();
             fixedWidth.value = props.block ? '100%' : `${width}px`;
         }
 
-        isLoading.value = true;
+        isHandlingClick.value = true;
 
-        if (props.onClickAction) {
-            try {
-                await dispatchAction(props.onClickAction as WidgetAction);
-            } catch (err) {
-                console.error('Error executing action hooks:', err);
-            } finally {
-                isLoading.value = false;
-            }
-        } else {
-            isLoading.value = false;
+        try {
+            await dispatchAction(props.onClickAction as WidgetAction);
+        } catch (err) {
+            console.error('Error executing action hooks:', err);
+        } finally {
+            isHandlingClick.value = false;
         }
     };
 
@@ -186,7 +194,7 @@
         class="genui-button"
         :class="computedClass"
         :type="submit ? 'submit' : 'button'"
-        :disabled="disabled || isLoading"
+        :disabled="isDisabled"
         :style="buttonStyle"
         @click="handleClick"
     >

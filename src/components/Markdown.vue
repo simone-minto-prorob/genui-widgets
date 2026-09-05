@@ -16,7 +16,7 @@
     });
 
     const html = computed(() => {
-        if (!props.value) return '';
+        if (!props.value || !DOMPurify.isSupported) return '';
         // Normalize URL's with references directly behind them, so they do not get joined onto the URL.
         // Example: [https://example.com][1] becomes [https://example.com] [1]
         const normalized = props.value.replace(
@@ -30,9 +30,11 @@
 </script>
 
 <template>
-    <div class="genui-markdown"
+    <div v-if="DOMPurify.isSupported"
+         class="genui-markdown"
          v-html="html"
     />
+    <div v-else class="genui-markdown">{{ value }}</div>
 </template>
 
 <style lang="scss">

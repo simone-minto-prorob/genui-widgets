@@ -513,12 +513,14 @@
       const darkWidgetFileMount = document.getElementById('dark-widget-file-demo');
 
       const lightWidgetFileDemo = render(lightWidgetFileMount, personWidgetTemplate, {
+        allowJinjaTemplates: true, // This demo's template source is application-authored.
         actionHooks,
         theme: defaultTheme,
         templateContext: personContext,
       });
 
       const darkWidgetFileDemo = render(darkWidgetFileMount, personWidgetTemplate, {
+        allowJinjaTemplates: true,
         actionHooks,
         theme: darkTheme,
         templateContext: personContext,

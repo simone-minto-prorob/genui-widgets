@@ -23,7 +23,7 @@ describe('extractTemplateFromWidgetFile', () => {
     const resolved = resolveTemplate(template, {
       jobTitle: 'Engineer',
       name: 'Ada Lovelace',
-    });
+    }, true);
 
     expect(resolved).toEqual({
       type: 'Card',
